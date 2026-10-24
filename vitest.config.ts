@@ -1,75 +1,7 @@
-import { availableParallelism } from "node:os";
-import { fileURLToPath } from "node:url";
-import { configDefaults, defineConfig } from "vitest/config";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-	resolve: {
-		alias: {
-			// @cloudflare/workers-oauth-provider imports this Workers runtime
-			// module; outside workerd it needs a shim.
-			"cloudflare:workers": fileURLToPath(
-				new URL("./tests/shims/cloudflare-workers.ts", import.meta.url).href,
-			),
-		},
-	},
 	test: {
-		pool: "forks",
-		isolate: true,
-		// Vitest 5 defaults clearMocks to true, which wipes call-count state
-		// recorded in earlier tests (for example the shared tool-registration
-		// spies). Tests were written against explicit reset semantics, so keep
-		// the vitest 4 behavior and reset mocks deliberately where needed.
-		clearMocks: false,
-		// Only unit opts into two workers. Other lanes stay serial: release-unit
-		// includes performance samples and tests that clean their report path.
-		maxWorkers:
-			process.env.HEVY_UNIT_LANE === "1"
-				? Math.min(2, availableParallelism())
-				: 1,
-		deps: {
-			optimizer: {
-				ssr: {
-					enabled: true,
-					// Bundle the large Effect namespace once rather than loading
-					// its module graph in every isolated test file. Include the
-					// test clock entrypoint so both share the same Effect internals.
-					include: ["effect", "effect/testing"],
-				},
-			},
-		},
-		setupFiles: [
-			fileURLToPath(
-				new URL("./tests/setup/cloudflare-runtime.ts", import.meta.url).href,
-			),
-		],
-		server: {
-			deps: {
-				// Inline so the `cloudflare:workers` alias above applies to the
-				// library's own import of that runtime-only module.
-				inline: ["@cloudflare/workers-oauth-provider"],
-			},
-		},
-		exclude: [
-			...configDefaults.exclude,
-			"tests/nightly/**",
-			"tests/cloudflare/**",
-		],
-		coverage: {
-			provider: "v8",
-			reportsDirectory: "coverage",
-			reporter: ["text", "lcov"],
-			// Apply thresholds only in the unit lane; other lanes upload partial
-			// reports to Codecov.
-			thresholds:
-				process.env.HEVY_UNIT_LANE === "1"
-					? { statements: 82, branches: 76, functions: 85, lines: 84 }
-					: undefined,
-			exclude: [
-				...(configDefaults.coverage.exclude ?? []),
-				"tests/performance/**",
-				"tests/fixtures/**",
-				"packages/hevy-client/src/generated/**",
-			],
-		},
+		include: ["test/**/*.test.ts"],
 	},
 });

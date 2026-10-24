@@ -1,0 +1,26 @@
+name = "yazio-mcp"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[observability]
+enabled = true
+
+# Non-secret settings. Secrets (YAZIO_EMAIL, YAZIO_PASSWORD, MCP_AUTH_TOKEN)
+# are set with `npx wrangler secret put <NAME>`, never in this file.
+[vars]
+# Time zone used for "today" and for entry timestamps (YAZIO stores local time).
+YAZIO_TIMEZONE = "Europe/Berlin"
+# v15–v19 answer without an app User-Agent; v20+ need YAZIO_USER_AGENT.
+YAZIO_API_VERSION = "v18"
+# Optional food-database market for search_food (defaults to the profile).
+# YAZIO_COUNTRY = "DE"
+# YAZIO_LOCALE = "de_DE"
+
+# Optional but recommended: persist the YAZIO token across isolates so the
+# server does not log in with the password on every cold start.
+# Create the namespace with `npx wrangler kv namespace create YAZIO_TOKEN_CACHE`
+# and paste the printed id here.
+# [[kv_namespaces]]
+# binding = "YAZIO_TOKEN_CACHE"
+# id = "<namespace-id>"

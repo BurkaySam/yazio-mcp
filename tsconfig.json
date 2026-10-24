@@ -1,25 +1,17 @@
 {
-	"$schema": "https://json.schemastore.org/tsconfig",
 	"compilerOptions": {
-		"target": "esnext",
-		"lib": [
-			"esnext"
-		] /* Specify a set of bundled library declaration files that describe the target runtime environment. */,
-		"module": "esnext" /* Specify what module code is generated. */,
-		"moduleResolution": "Bundler" /* Specify how TypeScript looks up a file from a given module specifier. */,
-		"allowImportingTsExtensions": true /* Allow importing TypeScript files with .ts extensions */,
-		"noEmit": true /* Disable emitting files from a compilation. */,
-		"esModuleInterop": true,
-		"outDir": "dist",
+		"target": "ES2023",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"lib": ["ES2023", "WebWorker"],
+		"types": ["@cloudflare/workers-types"],
 		"strict": true,
-		"skipLibCheck": true
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": false,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
+		"skipLibCheck": true,
+		"noEmit": true
 	},
-	// Include the necessary files for your project
-	"include": ["**/*.ts", "**/*.tsx"],
-	"exclude": [
-		"node_modules",
-		"dist",
-		"packages",
-		"tests/fixtures/generated-client/stale"
-	]
+	"include": ["src/**/*.ts", "test/**/*.ts", "vitest.config.ts"]
 }
